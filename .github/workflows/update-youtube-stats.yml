@@ -1,43 +1,45 @@
-import { writeFile } from 'node:fs/promises';
+name: Update YouTube statistics
 
-const apiKey = process.env.YOUTUBE_API_KEY;
-const handle = '@ShadyGG-13';
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
 
-if (!apiKey) {
-  throw new Error('Missing YOUTUBE_API_KEY repository secret.');
-}
+permissions:
+  contents: write
 
-const url = new URL('https://www.googleapis.com/youtube/v3/channels');
-url.searchParams.set('part', 'snippet,statistics');
-url.searchParams.set('forHandle', handle);
-url.searchParams.set('key', apiKey);
+concurrency:
+  group: youtube-statistics
+  cancel-in-progress: true
 
-const response = await fetch(url, {
-  headers: { 'User-Agent': 'ShadyGG-GitHub-Stats/1.0' }
-});
+jobs:
+  update:
+    runs-on: ubuntu-latest
 
-if (!response.ok) {
-  const body = await response.text();
-  throw new Error(`YouTube API request failed (${response.status}): ${body}`);
-}
+    steps:
+      - name: Check out website
+        uses: actions/checkout@v4
 
-const data = await response.json();
-const channel = data.items?.[0];
-if (!channel) {
-  throw new Error(`No YouTube channel found for ${handle}.`);
-}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-const statistics = channel.statistics ?? {};
-const output = {
-  channel: channel.snippet?.title ?? 'Shady GG',
-  handle,
-  channelId: channel.id,
-  subscribers: Number(statistics.subscriberCount ?? 0),
-  videos: Number(statistics.videoCount ?? 0),
-  views: Number(statistics.viewCount ?? 0),
-  hiddenSubscriberCount: Boolean(statistics.hiddenSubscriberCount),
-  updatedAt: new Date().toISOString()
-};
+      - name: Retrieve channel statistics
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node update-youtube-stats.mjs
 
-await writeFile('channel-stats.json', `${JSON.stringify(output, null, 2)}\n`, 'utf8');
-console.log('Updated channel statistics:', output);
+      - name: Commit updated statistics
+        shell: bash
+        run: |
+          if git diff --quiet -- channel-stats.json; then
+            echo "No statistics changed."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add channel-stats.json
+          git commit -m "Update YouTube channel statistics"
+          git push
