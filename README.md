@@ -24,3 +24,17 @@ Use **Settings → Pages → Deploy from a branch → main → /(root)**.
 
 ## Mobile menu fix
 This build includes a touch-friendly mobile navigation patch. Upload both `script.js` and `styles.css` together, and replace the HTML files so the menu button has the correct navigation attributes.
+
+
+## Automatic YouTube statistics
+
+The website reads `channel-stats.json`. A GitHub Actions workflow updates that file every six hours using the repository secret `YOUTUBE_API_KEY`.
+
+After uploading the site:
+
+1. Make sure `.github/workflows/update-youtube-stats.yml` exists in the repository.
+2. Open **Actions → Update YouTube statistics → Run workflow**.
+3. Wait for the green check, then open `channel-stats.json` to confirm the real channel numbers were saved.
+4. GitHub Pages may take a minute or two to display the new values.
+
+Never place the API key in an HTML, JavaScript, JSON, or README file.

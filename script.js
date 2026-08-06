@@ -85,19 +85,49 @@
       }
     }
 
-    var CURRENT_SUBSCRIBERS = 0;
-    var subscriberCounts = document.querySelectorAll('[data-subscriber-count]');
-    for (var s = 0; s < subscriberCounts.length; s++) subscriberCounts[s].textContent = CURRENT_SUBSCRIBERS.toLocaleString();
+    function updateChannelStats(stats) {
+      var subscribers = Number(stats.subscribers) || 0;
+      var videos = Number(stats.videos) || 0;
+      var views = Number(stats.views) || 0;
 
-    var goals = document.querySelectorAll('[data-goal]');
-    for (var g = 0; g < goals.length; g++) {
-      var goal = Number(goals[g].getAttribute('data-goal')) || 1;
-      var percent = Math.min(100, Math.max(0, (CURRENT_SUBSCRIBERS / goal) * 100));
-      var bar = goals[g].querySelector('.progress span');
-      var value = goals[g].querySelector('[data-progress-value]');
-      if (bar) bar.style.width = percent + '%';
-      if (value) value.textContent = CURRENT_SUBSCRIBERS + ' / ' + goal;
+      var subscriberCounts = document.querySelectorAll('[data-subscriber-count]');
+      for (var s = 0; s < subscriberCounts.length; s++) subscriberCounts[s].textContent = subscribers.toLocaleString();
+
+      var videoCounts = document.querySelectorAll('[data-video-count]');
+      for (var v = 0; v < videoCounts.length; v++) videoCounts[v].textContent = videos.toLocaleString();
+
+      var viewCounts = document.querySelectorAll('[data-view-count]');
+      for (var w = 0; w < viewCounts.length; w++) viewCounts[w].textContent = views.toLocaleString();
+
+      var updated = document.querySelectorAll('[data-stats-updated]');
+      var updatedDate = stats.updatedAt ? new Date(stats.updatedAt) : null;
+      var updatedText = updatedDate && !isNaN(updatedDate.getTime())
+        ? updatedDate.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })
+        : 'Waiting for first update';
+      for (var u = 0; u < updated.length; u++) updated[u].textContent = updatedText;
+
+      var goals = document.querySelectorAll('[data-goal]');
+      for (var g = 0; g < goals.length; g++) {
+        var goal = Number(goals[g].getAttribute('data-goal')) || 1;
+        var percent = Math.min(100, Math.max(0, (subscribers / goal) * 100));
+        var bar = goals[g].querySelector('.progress span');
+        var value = goals[g].querySelector('[data-progress-value]');
+        if (bar) bar.style.width = percent + '%';
+        if (value) value.textContent = subscribers.toLocaleString() + ' / ' + goal.toLocaleString();
+        goals[g].classList.toggle('complete', subscribers >= goal);
+      }
     }
+
+    fetch('channel-stats.json?cache=' + Date.now(), { cache: 'no-store' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('Channel statistics are unavailable.');
+        return response.json();
+      })
+      .then(updateChannelStats)
+      .catch(function (error) {
+        console.warn(error.message);
+        updateChannelStats({ subscribers: 0, videos: 0, views: 0 });
+      });
   }
 
   if (document.readyState === 'loading') {
