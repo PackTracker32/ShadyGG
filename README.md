@@ -21,3 +21,6 @@ Replace `0` with the current number. The milestone bars update automatically.
 
 ## GitHub Pages
 Use **Settings → Pages → Deploy from a branch → main → /(root)**.
+
+## Mobile menu fix
+This build includes a touch-friendly mobile navigation patch. Upload both `script.js` and `styles.css` together, and replace the HTML files so the menu button has the correct navigation attributes.

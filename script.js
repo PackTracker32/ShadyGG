@@ -1,48 +1,108 @@
-const menu=document.querySelector('.menu');
-const nav=document.querySelector('.nav-links');
-if(menu&&nav){
-  menu.addEventListener('click',()=>{
-    const open=nav.classList.toggle('open');
-    menu.setAttribute('aria-expanded',String(open));
-  });
-  nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
-}
+(function () {
+  'use strict';
 
-document.querySelectorAll('[data-year]').forEach(el=>el.textContent=new Date().getFullYear());
+  function initNavigation() {
+    var menu = document.querySelector('.menu');
+    var nav = document.querySelector('.nav-links');
+    if (!menu || !nav) return;
 
-const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
-  if(entry.isIntersecting)entry.target.classList.add('on');
-}),{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+    function setMenu(open) {
+      nav.classList.toggle('open', open);
+      document.body.classList.toggle('menu-open', open);
+      menu.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menu.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+      var icon = menu.querySelector('span');
+      if (icon) icon.textContent = open ? '✕' : '☰';
+    }
 
-window.addEventListener('load',()=>setTimeout(()=>document.querySelector('.loader')?.classList.add('hide'),300));
+    menu.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      setMenu(!nav.classList.contains('open'));
+    });
 
-// Atmospheric smoke and enhanced embers. Pure CSS/JS, so no extra asset files are needed.
-const atmosphere=document.createElement('div');
-atmosphere.className='atmosphere';
-atmosphere.setAttribute('aria-hidden','true');
-atmosphere.innerHTML='<span class="smoke-cloud"></span>'.repeat(5)+'<div class="ember-field"></div>';
-document.body.appendChild(atmosphere);
-const emberField=atmosphere.querySelector('.ember-field');
-for(let i=0;i<58;i++){
-  const ember=document.createElement('i');
-  ember.className='ember-particle';
-  ember.style.left=`${Math.random()*100}%`;
-  ember.style.setProperty('--size',`${1.5+Math.random()*3.4}px`);
-  ember.style.setProperty('--speed',`${7+Math.random()*12}s`);
-  ember.style.setProperty('--delay',`${-Math.random()*18}s`);
-  ember.style.setProperty('--drift',`${-90+Math.random()*180}px`);
-  emberField.appendChild(ember);
-}
+    nav.addEventListener('click', function (event) {
+      if (event.target && event.target.tagName === 'A') setMenu(false);
+    });
 
-// Easy-to-update milestone value. Change only this number as the channel grows.
-const CURRENT_SUBSCRIBERS=1;
-document.querySelectorAll('[data-subscriber-count]').forEach(el=>el.textContent=CURRENT_SUBSCRIBERS.toLocaleString());
-document.querySelectorAll('[data-goal]').forEach(el=>{
-  const goal=Number(el.dataset.goal)||1;
-  const percent=Math.min(100,Math.max(0,(CURRENT_SUBSCRIBERS/goal)*100));
-  const bar=el.querySelector('.progress span');
-  const value=el.querySelector('[data-progress-value]');
-  if(bar)requestAnimationFrame(()=>bar.style.width=`${percent}%`);
-  if(value)value.textContent=`${CURRENT_SUBSCRIBERS} / ${goal}`;
-});
+    document.addEventListener('click', function (event) {
+      if (nav.classList.contains('open') && !nav.contains(event.target) && !menu.contains(event.target)) {
+        setMenu(false);
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') setMenu(false);
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 850) setMenu(false);
+    });
+  }
+
+  function initPage() {
+    initNavigation();
+
+    var years = document.querySelectorAll('[data-year]');
+    for (var y = 0; y < years.length; y++) years[y].textContent = new Date().getFullYear();
+
+    var revealItems = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting) entries[i].target.classList.add('on');
+        }
+      }, { threshold: 0.12 });
+      for (var r = 0; r < revealItems.length; r++) observer.observe(revealItems[r]);
+    } else {
+      for (var f = 0; f < revealItems.length; f++) revealItems[f].classList.add('on');
+    }
+
+    window.addEventListener('load', function () {
+      window.setTimeout(function () {
+        var loader = document.querySelector('.loader');
+        if (loader) loader.classList.add('hide');
+      }, 300);
+    });
+
+    var atmosphere = document.createElement('div');
+    atmosphere.className = 'atmosphere';
+    atmosphere.setAttribute('aria-hidden', 'true');
+    atmosphere.innerHTML = '<span class="smoke-cloud"></span><span class="smoke-cloud"></span><span class="smoke-cloud"></span><span class="smoke-cloud"></span><span class="smoke-cloud"></span><div class="ember-field"></div>';
+    document.body.appendChild(atmosphere);
+
+    var emberField = atmosphere.querySelector('.ember-field');
+    if (emberField) {
+      for (var e = 0; e < 58; e++) {
+        var ember = document.createElement('i');
+        ember.className = 'ember-particle';
+        ember.style.left = (Math.random() * 100) + '%';
+        ember.style.setProperty('--size', (1.5 + Math.random() * 3.4) + 'px');
+        ember.style.setProperty('--speed', (7 + Math.random() * 12) + 's');
+        ember.style.setProperty('--delay', (-Math.random() * 18) + 's');
+        ember.style.setProperty('--drift', (-90 + Math.random() * 180) + 'px');
+        emberField.appendChild(ember);
+      }
+    }
+
+    var CURRENT_SUBSCRIBERS = 0;
+    var subscriberCounts = document.querySelectorAll('[data-subscriber-count]');
+    for (var s = 0; s < subscriberCounts.length; s++) subscriberCounts[s].textContent = CURRENT_SUBSCRIBERS.toLocaleString();
+
+    var goals = document.querySelectorAll('[data-goal]');
+    for (var g = 0; g < goals.length; g++) {
+      var goal = Number(goals[g].getAttribute('data-goal')) || 1;
+      var percent = Math.min(100, Math.max(0, (CURRENT_SUBSCRIBERS / goal) * 100));
+      var bar = goals[g].querySelector('.progress span');
+      var value = goals[g].querySelector('[data-progress-value]');
+      if (bar) bar.style.width = percent + '%';
+      if (value) value.textContent = CURRENT_SUBSCRIBERS + ' / ' + goal;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPage);
+  } else {
+    initPage();
+  }
+}());
