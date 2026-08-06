@@ -36,7 +36,7 @@ for(let i=0;i<58;i++){
 }
 
 // Easy-to-update milestone value. Change only this number as the channel grows.
-const CURRENT_SUBSCRIBERS=0;
+const CURRENT_SUBSCRIBERS=1;
 document.querySelectorAll('[data-subscriber-count]').forEach(el=>el.textContent=CURRENT_SUBSCRIBERS.toLocaleString());
 document.querySelectorAll('[data-goal]').forEach(el=>{
   const goal=Number(el.dataset.goal)||1;
