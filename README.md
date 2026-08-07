@@ -1,40 +1,40 @@
-# Shady GG Website — Polished V4
+# Shady GG — Automatic Video Hub
 
-Upload every file in this folder to the **root** of the GitHub repository.
+This package upgrades the website so:
 
-## Included improvements
-- Smaller home and inner-page header sections so visitors immediately see that more content is below.
-- Animated smoke layers and brighter drifting ember particles.
-- Scroll prompts on every header.
-- Shady Squad subscriber and milestone tracking.
-- Official YouTube links point to `https://www.youtube.com/@ShadyGG-13`.
-- All pages, including `about.html`, are included at the root level.
+- The homepage automatically displays the newest public YouTube upload.
+- The Videos page automatically displays every public upload as a numbered mission.
+- Subscriber count, video count, channel views, milestone bars, latest-video title, thumbnail, link, and upload date update from YouTube.
+- The existing mobile menu, smoke, embers, and responsive design remain included.
 
-## Updating the subscriber count
-Open `script.js` and change this line:
+## Upload these files
 
-```js
-const CURRENT_SUBSCRIBERS=0;
-```
+Upload every file and folder in this package to the repository root, replacing older versions when GitHub asks.
 
-Replace `0` with the current number. The milestone bars update automatically.
+The workflow must remain at:
 
-## GitHub Pages
-Use **Settings → Pages → Deploy from a branch → main → /(root)**.
+`.github/workflows/update-youtube-stats.yml`
 
-## Mobile menu fix
-This build includes a touch-friendly mobile navigation patch. Upload both `script.js` and `styles.css` together, and replace the HTML files so the menu button has the correct navigation attributes.
+Keep the existing repository secret named:
 
+`YOUTUBE_API_KEY`
 
-## Automatic YouTube statistics
+## Run the first update
 
-The website reads `channel-stats.json`. A GitHub Actions workflow updates that file every six hours using the repository secret `YOUTUBE_API_KEY`.
+After committing the files:
 
-After uploading the site:
+1. Open **Actions**.
+2. Select **Update YouTube statistics**.
+3. Choose **Run workflow**.
+4. Wait for the green check.
+5. Wait 1–3 minutes for GitHub Pages to redeploy.
+6. Hard-refresh the site.
 
-1. Make sure `.github/workflows/update-youtube-stats.yml` exists in the repository.
-2. Open **Actions → Update YouTube statistics → Run workflow**.
-3. Wait for the green check, then open `channel-stats.json` to confirm the real channel numbers were saved.
-4. GitHub Pages may take a minute or two to display the new values.
+The scheduled workflow runs every six hours. You can also run it manually after publishing a new video.
 
-Never place the API key in an HTML, JavaScript, JSON, or README file.
+## Files that power the automation
+
+- `update-youtube-stats.mjs` retrieves channel statistics and the complete uploads playlist.
+- `channel-stats.json` stores the public data used by the website.
+- `script.js` fills the homepage and mission archive automatically.
+- `videos.html` is the automatic mission archive.

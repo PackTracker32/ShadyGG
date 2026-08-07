@@ -1,10 +1,30 @@
 {
-  "channel": "Shady     GG",
+  "channel": "Shady GG",
   "handle": "@ShadyGG-13",
-  "channelId": "UCIpxXMvgW4gvjGRoRCbjPbA",
-  "subscribers": 3,
+  "channelId": "",
+  "subscribers": 0,
   "videos": 1,
   "views": 0,
   "hiddenSubscriberCount": false,
-  "updatedAt": "2026-08-07T04:14:26.116Z"
+  "updatedAt": "2026-08-06T00:00:00.000Z",
+  "latestVideo": {
+    "id": "go_21Uc5CcQ",
+    "title": "CLUTCH OR CHOKE? | My First Warzone Resurgence Match! | ShadyGG",
+    "description": "",
+    "publishedAt": "2026-08-06T00:00:00.000Z",
+    "thumbnail": "https://i.ytimg.com/vi/go_21Uc5CcQ/hqdefault.jpg",
+    "url": "https://www.youtube.com/watch?v=go_21Uc5CcQ",
+    "mission": 1
+  },
+  "videoList": [
+    {
+      "id": "go_21Uc5CcQ",
+      "title": "CLUTCH OR CHOKE? | My First Warzone Resurgence Match! | ShadyGG",
+      "description": "",
+      "publishedAt": "2026-08-06T00:00:00.000Z",
+      "thumbnail": "https://i.ytimg.com/vi/go_21Uc5CcQ/hqdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=go_21Uc5CcQ",
+      "mission": 1
+    }
+  ]
 }
