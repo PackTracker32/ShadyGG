@@ -81,3 +81,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;bac
 .empty-archive{padding:48px;text-align:center;border:1px dashed var(--line);background:rgba(255,255,255,.025)}
 @media(max-width:900px){.latest-video-card{grid-template-columns:1fr}.video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.latest-copy{padding:25px}}
 @media(max-width:600px){.video-grid{grid-template-columns:1fr}.archive-heading{align-items:flex-start;flex-direction:column}.archive-count{width:100%}.latest-copy{padding:21px}.latest-play{width:62px;height:46px}}
+
+
+/* Shady Squad stats layout */
+.milestone-summary .founding-goal-card {
+  grid-column: 1 / -1;
+}

@@ -56,11 +56,9 @@
   function updateChannelStats(stats) {
     var subscribers = Number(stats.subscribers) || 0;
     var videos = Number(stats.videos) || 0;
-    var views = Number(stats.views) || 0;
 
     setText('[data-subscriber-count]', subscribers.toLocaleString());
     setText('[data-video-count]', videos.toLocaleString());
-    setText('[data-view-count]', views.toLocaleString());
 
     var updatedDate = stats.updatedAt ? new Date(stats.updatedAt) : null;
     var updatedText = updatedDate && !isNaN(updatedDate.getTime())
