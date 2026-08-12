@@ -87,3 +87,31 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;bac
 .milestone-summary .founding-goal-card {
   grid-column: 1 / -1;
 }
+
+/* ShadyGG mobile hero banner fix - keeps the complete wide artwork visible on phones */
+@media (max-width: 520px) {
+  .hero {
+    min-height: 76vh;
+    background: #050505;
+  }
+  .hero:before {
+    background-image: url('shadygg-banner.png');
+    background-size: 100% auto;
+    background-position: center 76px;
+    background-repeat: no-repeat;
+    animation: none;
+  }
+  .hero:after {
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.08) 76px, rgba(0,0,0,.18) 205px, rgba(5,5,5,.94) 330px, #050505 100%),
+      linear-gradient(90deg, rgba(0,0,0,.28), transparent 45%, rgba(0,0,0,.28));
+  }
+  .hero-content {
+    padding-top: 245px;
+    padding-bottom: 42px;
+  }
+  .hero-panel {
+    max-width: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,.94), rgba(0,0,0,.72));
+  }
+}
